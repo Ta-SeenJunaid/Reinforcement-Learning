@@ -4,12 +4,12 @@
 import numpy as np
 import random
 import os
-import tourch
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import tourch.autograd as autograd
-from tourch.autograd import Variable
+import torch.autograd as autograd
+from torch.autograd import Variable
 
 #architecture of nural network
 
@@ -21,4 +21,10 @@ class Network(nn.Module):
         self.nb_action = nb_action
         self.full_connection_1 = nn.Linear(input_size, 30)
         self.full_connection_2 = nn.Linear(30, nb_action)
+        
+        
+    def forward(self, state):
+        x = F.relu(self.full_connection_1(state))
+        q_values = self.full_connection_2(x)
+        return q_values
 
