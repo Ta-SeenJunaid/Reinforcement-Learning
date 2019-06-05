@@ -22,9 +22,27 @@ class Network(nn.Module):
         self.full_connection_1 = nn.Linear(input_size, 30)
         self.full_connection_2 = nn.Linear(30, nb_action)
         
-        
+      
     def forward(self, state):
         x = F.relu(self.full_connection_1(state))
         q_values = self.full_connection_2(x)
         return q_values
+
+
+class ReplyMemory(object):
+    
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.memory = []
+
+
+
+
+
+
+
+
+
+
+
 
