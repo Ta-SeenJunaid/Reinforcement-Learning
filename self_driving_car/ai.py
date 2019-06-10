@@ -63,8 +63,8 @@ class Dqn():
         
     
     def select_action(self, state):
-        probabilities = F.softmax(self.model(Variable(state, volatile = True))*7) #probs=probabilities
-        action = probabilities.multinomial()
+        probabilities = F.softmax(self.model(Variable(state, volatile = True))*0) #probs=probabilities
+        action = probabilities.multinomial(1)
         return action.data[0,0]
     
     
@@ -79,8 +79,8 @@ class Dqn():
         
     def update(self, reward, new_signal):
         new_state = torch.Tensor(new_signal).float().unsqueeze(0)
-        self.memory.push(self.last_state, new_state, torch.LongTensor([int(self.last_action)]),
-                          torch.Tensor([self.last_reward]))
+        self.memory.push((self.last_state, new_state, torch.LongTensor([int(self.last_action)]),
+                          torch.Tensor([self.last_reward])))
         action = self.select_action(new_state)
         if len(self.memory.memory) > 100:
             batch_state, batch_next_state, batch_reward, batch_action = self.memory.sample(100)
@@ -94,7 +94,15 @@ class Dqn():
         return action
     
     def score(self):
-        return sum(self.reward_window/(len(self.reward_window)+1))
+        calc_list = []
+        list_len = len(self.reward_window)+1
+        for x in self.reward_window:
+            calc_list.append(x/list_len)
+            
+        return sum(calc_list)
+        
+        
+        #return sum(self.reward_window/(len(self.reward_window)+1))
     
     def save(self):
         torch.save({'state_dict': self.model.state_dict(),
